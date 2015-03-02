@@ -1,16 +1,17 @@
 package de.andreasschmitt.export.exporter
 
 import org.w3c.dom.Element
-import org.openoffice.odf.doc.OdfFileDom
-import org.openoffice.odf.doc.OdfSpreadsheetDocument
-import org.openoffice.odf.doc.element.style.OdfStyle
-import org.openoffice.odf.doc.element.table.*
-import org.openoffice.odf.doc.element.text.OdfParagraph
-import org.openoffice.odf.dom.OdfNamespace
-import org.openoffice.odf.dom.type.office.OdfValueType
+import org.odftoolkit.odfdom.pkg.OdfFileDom
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument
+import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle
+import org.odftoolkit.odfdom.doc.table.*
+import org.odftoolkit.odfdom.dom.element.table.*
+import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph
+import org.odftoolkit.odfdom.pkg.OdfNamespace
+import org.odftoolkit.odfdom.type.ValueType
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import org.openoffice.odf.pkg.OdfPackage
+import org.odftoolkit.odfdom.pkg.OdfPackage
 import org.w3c.dom.Document
 
 /**
@@ -38,7 +39,7 @@ class DefaultODSExporter  extends AbstractExporter {
 			 
 			 // Create header
 			 if(isHeaderEnabled){
-				 OdfTableHeaderRows tableHeaderRows = new OdfTableHeaderRows(contentDom)
+				 TableTableHeaderRowsElement tableHeaderRows = new TableTableHeaderRowsElement(contentDom)
 				 OdfTableRow headerRow = new OdfTableRow(contentDom)
 			 			 
 				 //Header
@@ -48,8 +49,8 @@ class DefaultODSExporter  extends AbstractExporter {
 			        OdfTableCell cell = new OdfTableCell(contentDom)
 			        cell.setStringValue(label)
 			        cell.setValueType(OdfValueType.STRING)
-			        
-			        OdfParagraph para = new OdfParagraph(contentDom)
+
+                    OdfTextParagraph para = new OdfTextParagraph(contentDom)
 			        para.appendChild(contentDom.createTextNode(label))
 			        
 			        cell.appendChild(para)
@@ -69,8 +70,8 @@ class DefaultODSExporter  extends AbstractExporter {
 					OdfTableCell cell = new OdfTableCell(contentDom)					
 			        cell.setStringValue(value?.toString())
 			        cell.setValueType(OdfValueType.STRING)
-			        
-			        OdfParagraph para = new OdfParagraph(contentDom)
+
+                    OdfTextParagraph para = new OdfTextParagraph(contentDom)
 			        para.appendChild(contentDom.createTextNode(value?.toString()))
 			        
 			        cell.appendChild(para)
