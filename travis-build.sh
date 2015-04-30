@@ -1,9 +1,7 @@
 #!/bin/bash
 set -e
 rm -rf *.zip
-./grailsw refresh-dependencies --non-interactive
-./grailsw test-app --non-interactive
-./grailsw package-plugin --non-interactive
+./gradlew clean test assemble
 # ./grailsw doc --pdf --non-interactive
 
 filename=$(find . -name "grails-*.zip" | head -1)

@@ -19,4 +19,4 @@ docs
 plugin.xml
 *.zip
 web-app
-
+*~
