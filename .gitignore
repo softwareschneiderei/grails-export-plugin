@@ -1,28 +1,22 @@
-# JetBrains IntelliJ IDEA files
+# Eclipse
+.classpath
+.project
+.gradle/
+build/
+.settings/
+target-eclipse/
+
+# Intellij
 .idea/
 *.iml
 *.iws
-.gradle
-build/
 
-# Log files
 *.log
-
-# Libraries and others
-*.jar
-*.zip
-
-# Target
-target/
-target-eclipse/
-
-.DS_Store
-
-docs/
-plugin.xml
-.settings
-
-# Unused grails files
-.classpath
-.project
 test/reports
+target
+docs
+.DS_Store
+plugin.xml
+*.zip
+web-app
+
