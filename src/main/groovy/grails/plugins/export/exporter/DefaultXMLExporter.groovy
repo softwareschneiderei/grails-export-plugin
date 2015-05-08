@@ -70,7 +70,7 @@ class DefaultXMLExporter extends AbstractExporter {
 				//Iterate through data
 				data.each { object ->
 					//Object element
-					"${properCase(object?.getClass()?.simpleName)}"(attributeMap != null ? attributeMap : [id: object?.id]){
+					"${object?.xmlNodeName ?: properCase(object?.getClass()?.simpleName)}"(attributeMap != null ? attributeMap : [id: object?.id]){
 						//Object attributes
 						fields.each { field ->
 							String elementName = getLabel(field)
