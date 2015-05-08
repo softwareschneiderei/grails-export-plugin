@@ -57,12 +57,20 @@ class DefaultXMLExporter extends AbstractExporter {
 	
 	private void build(String node, builder, Collection data, List fields, int depth){
 		if(depth >= 0 && data.size() > 0){
+			// Check to use id as node attribute
+			def attributeMap
+			if(getParameters().containsKey("xml.hide.id.attribute")){
+				if(getParameters().get("xml.hide.id.attribute")){
+					attributeMap = [:]
+				}
+			}
+
 			//Root element
 			builder."${properCase(node)}"{
 				//Iterate through data
 				data.each { object ->
 					//Object element
-					"${properCase(object?.getClass()?.simpleName)}"(id: object?.id){
+					"${properCase(object?.getClass()?.simpleName)}"(attributeMap != null ? attributeMap : [id: object?.id]){
 						//Object attributes
 						fields.each { field ->
 							String elementName = getLabel(field)
