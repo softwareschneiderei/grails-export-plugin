@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gpc/grails-export.svg)](https://travis-ci.org/gpc/grails-export)
+[![Build Status](https://travis-ci.org/gpc/export.svg)](https://travis-ci.org/gpc/export)
 
 Grails Export Plugin
 ====================
