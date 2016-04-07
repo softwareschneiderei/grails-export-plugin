@@ -1,0 +1,8 @@
+[[excel]]
+=== Excel Export
+
+|===
+| Parameter			| Default Value					| Allowed Values						| Description
+| column.widths		| equal size for all columns	| List of floats e.g. [0.2, 0.3, 0.5]	| column widths in percent
+| header.enabled	| true							|	true/false							| enable/disable header output
+|===

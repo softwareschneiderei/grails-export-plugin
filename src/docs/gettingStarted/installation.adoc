@@ -1,0 +1,22 @@
+[[installation]]
+=== Installation
+
+To install the plugin add a dependency to BuildConfig.groovy:
+
+[source, groovy, subs="attributes,verbatim"]
+----
+plugins {
+    compile ":export:1.6"
+}
+----
+
+To install the plugin with Grails 3.x:
+
+[source, groovy, subs="attributes,verbatim"]
+----
+dependencies {
+    compile "org.grails.plugins:export:{revnumber}"
+}
+----
+
+You can find the dependency declaration for the latest version on the https://grails.org/plugins.html#plugin/org.grails.plugins:export[plugin portal page].

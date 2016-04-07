@@ -1,0 +1,16 @@
+[[introduction]]
+== Introduction
+
+Welcome to the Export plugin for Grails.
+
+This plugin offers export functionality supporting different formats e.g. CSV, Excel, Open Document Spreadsheet, PDF and XML and can be extended to add additional formats.
+
+include::introduction/license.adoc[]
+
+include::introduction/currentVersion.adoc[]
+
+include::introduction/versionHistory.adoc[]
+
+include::introduction/acknowledgements.adoc[]
+
+include::introduction/sourceCode.adoc[]

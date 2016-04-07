@@ -1,0 +1,63 @@
+[[exportBar]]
+=== Export Bar
+
+Add the export bar to your GSP page e.g. below the paginate buttons:
+
+[source, html]
+----
+...
+<div class="paginateButtons">
+    <g:paginate total="${Book.count()}" />
+</div>
+<export:formats />
+
+or
+
+<export:formats formats="['csv', 'excel', 'ods', 'pdf', 'rtf', 'xml']" />
+
+</div>
+...
+----
+
+The formats tag supports the following attributes and allows you to pass through HTML attributes:
+* formats (Formats which should be displayed, List of Strings, e.g. ['csv', 'excel', 'ods', 'pdf', 'rtf', 'xml'])
+* params (Additional request parameters, Map, e.g. [sort: params?.sort, order: params?.order])
+* action (Action which should be called, defaults to current action)
+* controller (Controller which should be called, defaults to current controller)
+
+To make the plugin work you need to add some code to your controller:
+
+[source, groovy]
+----
+class BookController {
+    // Export service provided by Export plugin	
+    def exportService
+    def grailsApplication  //inject GrailsApplication
+...
+
+    def list = {
+        if(!params.max) params.max = 10
+
+		if(params?.format && params.format != "html"){
+			response.contentType = grailsApplication.config.grails.mime.types[params.format]
+			response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
+
+exportService.export(params.format, response.outputStream,Book.list(params), [:], [:])
+		}
+
+        [ bookInstanceList: Book.list( params ) ]
+    }
+
+}
+...
+----
+
+This will export all book objects with all attributes except version. You can also configure which attributes should be exported. The following example will rely on a simple domain class:
+
+[source, groovy]
+----
+class Book {
+	String title
+	String author
+}
+----

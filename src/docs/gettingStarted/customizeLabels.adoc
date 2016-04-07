@@ -1,0 +1,14 @@
+[[customizeLabels]]
+=== Customizing labels on export bar
+
+You can customize the labels displayed on the export bar by adding the following lines to grails-app/i18n/messages.properties:
+
+[source]
+----
+default.csv=CSV
+default.excel=Excel
+default.pdf=PDF
+default.rtf=RTF
+default.xml=XML
+default.ods=ODS
+----

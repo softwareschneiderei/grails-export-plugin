@@ -1,0 +1,17 @@
+[[acknowledgements]]
+=== Acknowledgments
+
+Following are the plugin contributors:
+
+* https://github.com/graemerocher[Graeme Rocher]
+* https://github.com/puneetbehl[Puneet Behl]
+* https://github.com/nwwells[Nathan Wells]
+* https://github.com/tulu[Ruben]
+* https://github.com/arturoojeda[Arturo Ojeda López]
+* https://github.com/fabiooshiro[Fabio Issamu Oshiro]
+* https://github.com/ddelponte[Dean Del Ponte]
+* https://github.com/cristallo[Cristiano Limiti]
+* https://github.com/mirweb[Mirko Weber]
+* https://github.com/joasgarcia[Joás Garcia]
+* https://github.com/frangarcia[Fran García]
+* https://github.com/dustindclark[Dustin Clark]

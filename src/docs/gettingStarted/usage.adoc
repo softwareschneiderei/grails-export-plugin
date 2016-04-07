@@ -1,0 +1,27 @@
+[[usage]]
+=== Usage
+
+Export plugin uses resource plugin to provide resources (since version 1.1). Add the following markup to your GSP header:
+
+[source, gsp]
+----
+<head>
+...
+    <r:require module="export"/>
+...
+</head>
+----
+
+
+
+[NOTE]
+====
+To use the export features in plugin versions up to 1.0 add the following markup to your GSP header:
+
+[source, gsp]
+----
+<export:resource />
+----
+====
+
+Please refer to the <<configuration>> section to understand how to configure the file manager.
