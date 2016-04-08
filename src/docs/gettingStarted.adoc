@@ -10,3 +10,4 @@ include::gettingStarted/exportBar.adoc[]
 include::gettingStarted/customizeLabels.adoc[]
 
 include::gettingStarted/customizeOutput.adoc[]
+

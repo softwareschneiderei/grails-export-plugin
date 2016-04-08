@@ -6,4 +6,3 @@ include::introduction.adoc[]
 include::gettingStarted.adoc[]
 
 include::additionalParameters.adoc[]
-

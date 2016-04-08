@@ -1,5 +1,5 @@
 [[additionalParameters]]
-=== Additional Parameters
+== Additional Parameters
 
 With the new formatter closure you can combine multiple attributes:
 
