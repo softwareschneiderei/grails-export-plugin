@@ -1,0 +1,13 @@
+[[csvExport]]
+=== CSV Export
+
+CSV export also supports some additional parameters:
+
+|===
+| Parameter 		| Default Value 				| Allowed Value | Description
+| encoding			| JVM default encoding			| http://java.sun.com/javase/6/docs/api/java/nio/charset/Charset.html e.g. "UTF-8"  | encodings
+| separator			| ,								| a single charater																	| field separator
+| quoteCharacter 	| "								| a single character																| use 'u0000' for no quote character and put a slash before the four 0s, quote character
+| lineEnd 			| default platform line ending	|  String e.g. "rn"																	| line ending
+| header.enabled	| true							| true/false																		| enable/disable header output
+|===

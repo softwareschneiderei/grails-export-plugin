@@ -8,6 +8,8 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+		classpath 'org.ajoberstar:gradle-git:1.4.2'
     }
 }
 
@@ -32,6 +34,7 @@ apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/m
 ext {
     grailsVersion = project.grailsVersion
     gradleWrapperVersion = project.gradleWrapperVersion
+	exportVersion = "2.0.0"
 }
 
 sourceCompatibility = 1.7
@@ -80,3 +83,7 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
+
+apply from: "gradle/documentation.gradle"
+
+apply from: "gradle/publish.gradle"

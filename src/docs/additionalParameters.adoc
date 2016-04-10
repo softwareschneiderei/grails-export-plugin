@@ -1,0 +1,27 @@
+[[additionalParameters]]
+== Additional Parameters
+
+With the new formatter closure you can combine multiple attributes:
+
+[source, groovy]
+----
+	// Formatter closure
+          def title = { domain, value ->
+		return domain?.author + ": " + domain?.title
+	}
+----
+
+[WARNING]
+====
+Version 0.7 changes formatter closures. To upgrade from a previous release you need to add the domain argument to your closures as shown in the code sample above.
+====
+
+include::additionalParameters/pdfExport.adoc[]
+
+include::additionalParameters/csvExport.adoc[]
+
+include::additionalParameters/excel.adoc[]
+
+include::additionalParameters/rtf.adoc[]
+
+include::additionalParameters/xml.adoc[]

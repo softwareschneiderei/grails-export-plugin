@@ -1,0 +1,46 @@
+[[customizeOutput]]
+=== Customize output of the fields
+
+You can see how the fields are now set explicitly. You can use labels to customize the output of the fields e.g. for i18n. Using formatters it is possible to customize how the resulting values are generated which can be used to specify a particular date format etc. by just mapping an attribute name to a closure. It is also possible to specify non-existant fields and add formatters for those fields to produce static content like today's date.
+
+[source, groovy]
+----
+class BookController {
+    def exportService
+    def grailsApplication  //inject GrailsApplication
+...
+
+    def list = {
+        if(!params.max) params.max = 10
+
+		if(params?.format && params.format != "html"){
+			response.contentType = grailsApplication.config.grails.mime.types[params.format]
+			response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
+
+
+			List fields = ["author", "title"]
+			Map labels = ["author": "Author", "title": "Title"]
+
+            /* Formatter closure in previous releases
+			def upperCase = { value ->
+				return value.toUpperCase()
+			}
+			*/
+
+            // Formatter closure
+			def upperCase = { domain, value ->
+				return value.toUpperCase()
+			}
+
+			Map formatters = [author: upperCase]		
+			Map parameters = [title: "Cool books", "column.widths": [0.2, 0.3, 0.5]]
+
+			exportService.export(params.format, response.outputStream, Book.list(params), fields, labels, formatters, parameters)
+		}
+
+        [ bookInstanceList: Book.list( params ) ]
+    }
+
+}
+...
+----

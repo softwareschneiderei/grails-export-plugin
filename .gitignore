@@ -14,7 +14,7 @@ target-eclipse/
 *.log
 test/reports
 target
-docs
+/docs
 .DS_Store
 plugin.xml
 *.zip

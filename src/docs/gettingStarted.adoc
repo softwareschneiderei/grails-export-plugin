@@ -1,0 +1,13 @@
+[[gettingStarted]]
+== Getting started
+
+include::gettingStarted/installation.adoc[]
+
+include::gettingStarted/usage.adoc[]
+
+include::gettingStarted/exportBar.adoc[]
+
+include::gettingStarted/customizeLabels.adoc[]
+
+include::gettingStarted/customizeOutput.adoc[]
+
