@@ -7,4 +7,4 @@ Primary fork of the original export plugin. Sources forked from SVN and maintain
 
 The user guide can be found here: [Documentation]
 
-[Documentation]: http://gpc.github.com/grails-export/
+[Documentation]: http://gpc.github.com/export/
