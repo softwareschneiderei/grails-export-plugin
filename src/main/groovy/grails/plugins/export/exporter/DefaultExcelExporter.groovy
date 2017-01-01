@@ -112,9 +112,11 @@ class DefaultExcelExporter extends AbstractExporter {
     }
 
     private computeSheetsAndLimit(List data, maxPerSheet) {
+		if(data?.size() <= 0)
+            throw new ExportingException("Error during export: Empty data!")
+			
         def limitPerSheet = data.size() > maxPerSheet ? maxPerSheet : data.size()
         def sheetsCount = data.size()/limitPerSheet
-        log.debug "limitPerSheet:$limitPerSheet ::: sheetsCount:$sheetsCount"
         return [sheetsCount, limitPerSheet]
     }
 
