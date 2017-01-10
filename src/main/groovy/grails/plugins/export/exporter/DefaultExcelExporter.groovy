@@ -116,7 +116,7 @@ class DefaultExcelExporter extends AbstractExporter {
             throw new ExportingException("Error during export: Empty data!")
 			
         def limitPerSheet = data.size() > maxPerSheet ? maxPerSheet : data.size()
-        def sheetsCount = data.size()/limitPerSheet
+        def sheetsCount = Math.ceil(data.size()/limitPerSheet)
         return [sheetsCount, limitPerSheet]
     }
 
