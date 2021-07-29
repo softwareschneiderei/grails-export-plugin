@@ -3,17 +3,15 @@ on:
   push:
     branches:
       - master
-      - '[3-9]+.[0-9]+.x'
   pull_request:
     branches:
       - master
-      - '[3-9]+.[0-9]+.x'
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: ['8', '11', '14']
+        java: ['8', '11']
     env:
       WORKSPACE: ${{ github.workspace }}
       GRADLE_OPTS: -Xmx1500m -Dfile.encoding=UTF-8
@@ -30,9 +28,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
-      - name: Optional setup step
-        run: |
-          [ -f ./setup.sh ] && ./setup.sh || true
       - name: Run Tests
         run: ./gradlew check
       - name: Publish Test Report
