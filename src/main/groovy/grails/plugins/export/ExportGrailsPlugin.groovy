@@ -7,22 +7,13 @@ import org.slf4j.LoggerFactory
 
 @Commons
 class ExportGrailsPlugin extends Plugin {
-    // the plugin version
-    def version = "2.0-SNAPSHOT"
-    // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "3.0.1 > *"
-    // the other plugins this plugin depends on
+    def grailsVersion = "4.0.0 > *"
     def dependsOn = [:]
-    // resources that are excluded from plugin packaging
     def pluginExcludes = [
         "grails-app/views/error.gsp"
     ]
-    
-    def title = "Export Plugin" // Headline display name of the plugin
-
-    // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/export"
-
+    def title = "Grails Export Plugin"
+    def documentation = "https://gpc.github.io/export/"
     def author = "Grails Plugin Collective"
     def authorEmail = "grails.plugin.collective@gmail.com"
     def description = '''\
@@ -30,9 +21,9 @@ This plugin offers export functionality supporting different formats e.g. CSV, E
 and can be extended to add additional formats. 
 '''
     def license = 'APACHE'
-    def organization = [name: 'Grails Plugin Collective', url: 'http://github.com/gpc']
-    def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/GPEXPORT']
-    def scm = [url: 'https://github.com/gpc/grails-export']
+    def organization = [name: 'Grails Plugin Collective', url: 'https://github.com/gpc']
+    def issueManagement = [system: 'Github', url: 'https://github.com/gpc/export/issues']
+    def scm = [url: 'https://github.com/gpc/export']
 
 
 
