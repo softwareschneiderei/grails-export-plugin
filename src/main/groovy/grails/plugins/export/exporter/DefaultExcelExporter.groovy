@@ -1,6 +1,7 @@
 package grails.plugins.export.exporter
 
 import grails.plugins.export.builder.ExcelBuilder
+import groovy.util.logging.Log
 import jxl.format.Alignment
 import jxl.format.Colour
 
@@ -8,6 +9,7 @@ import jxl.format.Colour
  * @author Andreas Schmitt
  *
  */
+@Log
 class DefaultExcelExporter extends AbstractExporter {
 
     protected void exportData(OutputStream outputStream, List data, List fields) throws ExportingException{
@@ -117,7 +119,7 @@ class DefaultExcelExporter extends AbstractExporter {
 			
         def limitPerSheet = data.size() > maxPerSheet ? maxPerSheet : data.size()
         def sheetsCount = Math.ceil(data.size()/limitPerSheet)
-        log.debug "limitPerSheet:$limitPerSheet ::: sheetsCount:$sheetsCount"
+        log.fine "limitPerSheet:$limitPerSheet ::: sheetsCount:$sheetsCount"
         return [sheetsCount, limitPerSheet]
     }
 

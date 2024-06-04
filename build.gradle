@@ -20,6 +20,8 @@ apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.internal.grails-plugin-publish"
 apply plugin: "io.spring.dependency-management"
+apply plugin: 'java-library'
+apply plugin: 'java'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -37,26 +39,46 @@ dependencyManagement {
 }
 
 dependencies {
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat"
 
-    provided "org.grails:grails-web-boot"
-    provided "org.grails:grails-dependencies"
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
+    implementation "org.grails:grails-web-boot"
+    implementation "org.grails:grails-dependencies"
 
-    compile 'net.sf.opencsv:opencsv:2.3'
+    api 'net.sf.opencsv:opencsv:2.3'
 
-    compile 'com.lowagie:itext:2.1.7'
-    compile "com.lowagie:itext-rtf:2.1.7"
-    runtime 'xerces:xercesImpl:2.9.0'
+    api 'com.lowagie:itext:2.1.7'
+    api "com.lowagie:itext-rtf:2.1.7"
+    runtimeOnly 'xerces:xercesImpl:2.9.0'
 
-    compile 'org.odftoolkit:simple-odf:0.6.6'
-    compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
-    compile 'commons-beanutils:commons-beanutils:1.8.3'
+    api 'org.odftoolkit:simple-odf:0.6.6'
+    api 'net.sourceforge.jexcelapi:jxl:2.6.12'
+    api 'commons-beanutils:commons-beanutils:1.8.3'
+    api 'commons-codec:commons-codec:1.17.0'
 
-    testCompile "org.grails:grails-plugin-testing"
+    testCompileOnly "org.grails:grails-plugin-testing"
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    exclude 'gsp**'
+
+    List excludes = ['UrlMappings', 'TestController']
+    excludes.each {
+        exclude "**/${it}*.class"
+    }
+    eachFile { copyDetails ->
+        if (copyDetails.path.contains('grails-plugin.xml')) {
+            filter { line -> excludes.find{line.contains(it)}? null : line}
+        }
+    }
+    archiveClassifier=''
 }
 
 grailsPublish {
