@@ -50,11 +50,6 @@ dependencies {
     testCompileOnly "org.grails:grails-plugin-testing"
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 jar {
     exclude 'gsp**'
 
