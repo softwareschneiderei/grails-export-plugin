@@ -40,11 +40,11 @@ dependencies {
 
     api 'com.lowagie:itext:2.1.7'
     api "com.lowagie:itext-rtf:2.1.7"
-    runtimeOnly 'xerces:xercesImpl:2.9.0'
+    runtimeOnly 'xerces:xercesImpl:2.12.2'
 
     api 'org.odftoolkit:simple-odf:0.6.6'
     api 'net.sourceforge.jexcelapi:jxl:2.6.12'
-    api 'commons-beanutils:commons-beanutils:1.8.3'
+    api 'commons-beanutils:commons-beanutils:1.9.4'
     api 'commons-codec:commons-codec:1.17.0'
 
     testCompileOnly "org.grails:grails-plugin-testing"
