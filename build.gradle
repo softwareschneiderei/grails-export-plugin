@@ -9,7 +9,6 @@ plugins {
     id "eclipse"
 }
 
-version project.projectVersion
 group "org.grails.plugins"
 
 sourceCompatibility = 1.8
