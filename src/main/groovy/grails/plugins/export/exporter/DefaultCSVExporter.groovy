@@ -1,6 +1,7 @@
 package grails.plugins.export.exporter
 
-import au.com.bytecode.opencsv.CSVWriter
+import com.opencsv.CSVWriter
+
 
 /**
  * @author Andreas Schmitt
