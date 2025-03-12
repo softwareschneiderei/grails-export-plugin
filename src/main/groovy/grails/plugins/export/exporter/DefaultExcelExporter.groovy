@@ -2,8 +2,8 @@ package grails.plugins.export.exporter
 
 import grails.plugins.export.builder.ExcelBuilder
 import groovy.util.logging.Log
-import jxl.format.Alignment
-import jxl.format.Colour
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.IndexedColors
 
 /**
  * @author Andreas Schmitt
@@ -12,7 +12,7 @@ import jxl.format.Colour
 @Log
 class DefaultExcelExporter extends AbstractExporter {
 
-    protected void exportData(OutputStream outputStream, List data, List fields) throws ExportingException{
+    protected void exportData(OutputStream outputStream, List data, List fields) throws ExportingException {
         try {
             def builder = new ExcelBuilder()
 
@@ -36,33 +36,36 @@ class DefaultExcelExporter extends AbstractExporter {
             def startIndex = 0
             def endIndex = limitPerSheet
 
+            def fileFormat = getParameters().get('fileFormat')
+
             builder {
-                workbook(outputStream: outputStream){
-                    for(int j=1; j<=sheets; j++){
+                workbook(fileFormat: fileFormat){
+                    for (int j = 1; j <= sheets; j++) {
                         def dataPerSheet = data.subList(startIndex, endIndex)
-                        sheet(name: getParameters().get("title")+"-$j" ?: "Export-$j", widths: getParameters().get("column.widths"), numberOfFields: dataPerSheet.size(), widthAutoSize: getParameters().get("column.width.autoSize")) {
+                        def sheetTitle = getParameters().get("title")
+                        sheet(name: sheetTitle ? "$sheetTitle-$j" : "Export-$j", widths: getParameters().get("column.widths"), numberOfFields: dataPerSheet.size(), widthAutoSize: getParameters().get("column.width.autoSize")) {
 
                             format(name: "title") {
-                                Alignment alignment = Alignment.GENERAL
+                                HorizontalAlignment alignment = HorizontalAlignment.GENERAL
                                 if (getParameters().containsKey('titles.alignment')) {
-                                    alignment = Alignment."${getParameters().get('titles.alignment')}"
+                                    alignment = HorizontalAlignment."${getParameters().get('titles.alignment')}"
                                 }
                                 font(name: "arial", bold: true, size: 14, alignment: alignment)
                             }
 
                             format(name: "header") {
                                 if (useZebraStyle) {
-                                    font(name: "arial", bold: true, backColor: Colour.GRAY_80, foreColor: Colour.WHITE, useBorder: true)
+                                    font(name: "arial", bold: true, backColor: IndexedColors.GREY_80_PERCENT.index, foreColor: IndexedColors.WHITE.index, useBorder: true)
                                 } else {
                                     // Use default header format
                                     font(name: "arial", bold: true)
                                 }
                             }
                             format(name: "odd") {
-                                font(backColor: Colour.GRAY_25, useBorder: true)
+                                font(backColor: IndexedColors.GREY_25_PERCENT.index, useBorder: true)
                             }
                             format(name: "even") {
-                                font(backColor: Colour.WHITE, useBorder: true)
+                                font(backColor: IndexedColors.WHITE.index, useBorder: true)
                             }
 
                             int rowIndex = 0
@@ -106,21 +109,20 @@ class DefaultExcelExporter extends AbstractExporter {
                 }
             }
 
-            builder.write()
-        }
-        catch(Exception e){
+            builder.write(outputStream)
+        } catch (Exception e) {
             throw new ExportingException("Error during export", e)
         }
     }
 
-    private computeSheetsAndLimit(List data, maxPerSheet) {
-		if(!data)
-            throw new ExportingException("Error during export: Empty data!")
-			
+    private static computeSheetsAndLimit(List data, maxPerSheet) {
+		if (!data) {
+            return [1, 0]
+        }
+
         def limitPerSheet = data.size() > maxPerSheet ? maxPerSheet : data.size()
         def sheetsCount = Math.ceil(data.size()/limitPerSheet)
         log.fine "limitPerSheet:$limitPerSheet ::: sheetsCount:$sheetsCount"
         return [sheetsCount, limitPerSheet]
     }
-
 }

@@ -1,32 +1,13 @@
 package grails.plugins.export.builder
 
-import groovy.util.BuilderSupport
-import jxl.CellView
-import jxl.format.Border
-import jxl.format.BorderLineStyle
-import jxl.format.CellFormat
-import jxl.format.Colour
-import jxl.format.Pattern
-import jxl.write.WritableFont
-import jxl.Workbook
-import jxl.write.Label
-import jxl.write.Number
-import jxl.write.DateTime
-import jxl.write.WritableCellFormat
-import jxl.write.WritableFont
-import jxl.write.WritableSheet
-import jxl.write.WritableWorkbook
-import jxl.write.WriteException
-import jxl.write.biff.RowsExceededException
-import jxl.write.WritableFont
-import jxl.format.UnderlineStyle
-import jxl.format.UnderlineStyle
-import jxl.write.WritableCellFormat
-import jxl.write.biff.CellValue
-import jxl.write.WritableFont
-import jxl.write.WritableHyperlink
 
-import org.apache.commons.logging.*
+import org.apache.poi.common.usermodel.HyperlinkType
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.WorkbookUtil
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * @author Andreas Schmitt
@@ -64,13 +45,14 @@ import org.apache.commons.logging.*
 
 class ExcelBuilder extends BuilderSupport {
 
-	WritableWorkbook workbook
-	WritableSheet sheet
+	Workbook workbook
+	Sheet sheet
+	CellStyle defaultHyperlinkStyle
 	
 	String format
-	Map formats = [:]
+	Map<String, CellStyle> formats = [:]
 
-	private static Log log = LogFactory.getLog(ExcelBuilder)
+	private static Logger log = LoggerFactory.getLogger(ExcelBuilder.class)
 
 	/**
     * This method isn't implemented.
@@ -88,11 +70,7 @@ class ExcelBuilder extends BuilderSupport {
     protected Object createNode(Object name) {
     	log.debug("createNode(Object name)")
     	log.debug("name: ${name}")
-    	
-    	if(name == "write"){
-    		this.write()
-    	}
-    	
+    	createNode(name, [:])
         return null
     }
 
@@ -118,125 +96,125 @@ class ExcelBuilder extends BuilderSupport {
     	log.debug("createNode(Object name, Map attributes)")
     	log.debug("name: ${name} attributes: ${attributes}")
     	
-    	switch(name){
+    	switch (name) {
     		// Workbook, the Excel document as such
     		case "workbook":
-    			if(attributes?.outputStream){
-    		    	try {
-    		    		log.debug("Creating workbook")
-    		        	workbook = Workbook.createWorkbook(attributes?.outputStream)	
-    		    	}
-    		    	catch(Exception e){
-    		    		log.error("Error creating workbook", e)
-    		    	}
-    			}
+				try {
+					log.debug("Creating workbook")
+					// we support new XLSX file format but default to the old excel 97 file format if not requested otherwise
+					workbook = attributes?.fileFormat == 'xlsx' ? new XSSFWorkbook() : new HSSFWorkbook()
+					defaultHyperlinkStyle = createDefaultHyperlinkStyle(workbook)
+				} catch (Exception e) {
+					log.error("Error creating workbook", e)
+				}
     			break
-    		
     		// Sheet, an Excel file can contain multiple sheets which are typically shown as tabs
     		case "sheet":
     			try {
         			log.debug("Creating sheet")
-        			sheet = workbook.createSheet(attributes?.name, workbook.getNumberOfSheets())	
+        			sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(attributes?.name as String))
 					if (attributes?.widths && !attributes?.widths?.isEmpty()) {
 						attributes.widths.eachWithIndex { width, i ->
-							sheet.setColumnView(i, (width < 1.0 ? width * 100 : width) as int )
+							sheet.setColumnWidth(i, (width < 1.0 ? width * 100 : width) as int)
 						}
 					} else {
-                        if(attributes?.widthAutoSize){
-                            for(int i = 0; i < attributes.numberOfFields - 1; i++){
-                                sheet.setColumnView(i, new CellView(autosize: true))
+                        if (attributes?.widthAutoSize){
+                            for (int columnIndex = 0; columnIndex < attributes.numberOfFields - 1; columnIndex++){
+                                sheet.autoSizeColumn(columnIndex)
                             }
                         }
                     }
-    			}
-    			catch(Exception e){
+    			} catch(Exception e) {
     				log.error("Error creating sheet", e)
     			}
     			break
-    			
     		// Cell, column header or row cells
     		case "cell":
     			try {
-    				CellValue value
-        			if(attributes?.value instanceof java.lang.Number){
+					Row row = sheet.getRow(attributes?.row as int) ?: sheet.createRow(attributes?.row as int)
+    				Cell cell
+					def value = attributes?.value
+					def valueString = attributes?.value?.toString()
+        			if (value instanceof Number) {
         				log.debug("Creating number cell")
-        				value = new Number(attributes?.column, attributes?.row, attributes?.value)
-        			} else if(attributes?.value instanceof Date){
+        				cell = row.createCell(attributes?.column as int, CellType.NUMERIC)
+	       			} else if(value instanceof Date){
                         log.debug("Creating date cell")
-                        value = new DateTime(attributes?.column, attributes?.row, attributes?.value)
-                    }
-        			else {
+                        cell = row.createCell(attributes?.column as int)
+                    } else if (valueString?.toLowerCase()?.startsWith('http://') || valueString?.toLowerCase()?.startsWith('https://')) {
+						// Create hyperlinks for values beginning with http
+						log.debug("Changing cell to Hyperlink")
+						Hyperlink link = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL)
+						link.setAddress(valueString)
+						cell = row.createCell(attributes?.column as int)
+						cell.setHyperlink(link)
+						cell.setCellStyle(defaultHyperlinkStyle)
+						value = valueString ?: 'no URL'
+					} else {
         				log.debug("Creating label cell")
-        				value = new Label(attributes?.column, attributes?.row, attributes?.value?.toString())
+        				cell = row.createCell(attributes?.column as int, CellType.STRING)
         			}
-
-    				if(attributes?.format && formats.containsKey(attributes?.format)){
-    					value.setCellFormat(formats[attributes.format])
-    				}
-					
-					// Create hyperlinks for values beginning with http
-					if (attributes?.value?.toString()?.toLowerCase()?.startsWith('http://') || attributes?.value?.toString()?.toLowerCase()?.startsWith('https://')) {
-        				log.debug("Changing cell to Hyperlink")
-        				def link = new WritableHyperlink(attributes?.column, attributes?.row, new URL(attributes?.value?.toString()))
-						link.setDescription(attributes?.value?.toString() ?: 'no URL')
-						sheet.addHyperlink(link);
+					cell.setCellValue(value)
+					if (attributes?.format && formats.containsKey(attributes?.format)) {
+						cell.setCellStyle(formats[attributes.format])
 					}
-					else {
-						sheet.addCell(value)
-					}
-    			}
-    			catch(Exception e){
+				} catch(Exception e) {
     				log.error("Error adding cell with attributes: ${attributes}", e)
     			}
     			break
-    			
     		case "format":
-    			if(attributes?.name){
+    			if (attributes?.name){
     				format = attributes?.name
     			}
     			break
-    		
     		case "font":
     			try {
     				log.debug("attributes: ${attributes}")
     				
         			attributes.name = attributes?.name ? attributes?.name : "arial"
         	    	attributes.italic = attributes?.italic ? attributes?.italic : false
-        	    	attributes.bold = attributes?.bold ? attributes?.bold : "false"
-        	    	attributes["size"] = attributes["size"] ? attributes["size"] : WritableFont.DEFAULT_POINT_SIZE
+        	    	attributes.bold = attributes?.bold ? Boolean.valueOf(attributes?.bold as String) : false
+        	    	attributes["size"] = attributes["size"] ? attributes["size"] : 10
         	    	attributes.underline = attributes?.underline ? attributes?.underline : "none"
-                    //attributes.backColor = attributes?.backColor ? attributes?.backColor : Colour.WHITE
-                    attributes.foreColor = attributes?.foreColor ? attributes?.foreColor : Colour.BLACK
+                    attributes.foreColor = attributes?.foreColor ? attributes?.foreColor : IndexedColors.BLACK.index
                     attributes.useBorder = attributes?.useBorder ? attributes?.useBorder : false
         	    			
-        	    	Map bold = ["true": WritableFont.BOLD, "false": WritableFont.NO_BOLD]		
-        	    	if(bold.containsKey(attributes.bold.toString())){
-        	    		attributes.bold = bold[attributes?.bold.toString()]	
-        	    	}
-        	    			
-        	    	Map underline = ["none": UnderlineStyle.NO_UNDERLINE, "double accounting": UnderlineStyle.DOUBLE_ACCOUNTING,
-        	    			         "single": UnderlineStyle.SINGLE, "single accounting": UnderlineStyle.SINGLE_ACCOUNTING]
-        	    	if(underline.containsKey(attributes.underline)){
+        	    	Map underline = ["none": Font.U_NONE, "double accounting": Font.U_DOUBLE_ACCOUNTING,
+        	    			         "single": Font.U_SINGLE, "single accounting": Font.U_SINGLE_ACCOUNTING]
+        	    	if (underline.containsKey(attributes.underline)) {
         	    		attributes.underline = underline[attributes.underline]
         	    	}
-        	    	
-        	    	Map fontname = ["arial":  WritableFont.ARIAL, "courier": WritableFont.COURIER, 
-        	    	            "tahoma":  WritableFont.TAHOMA, "times":  WritableFont.TIMES]
-        	    	if(fontname.containsKey(attributes.name)){
+        	    	Map fontname = ["arial":  "Arial", "courier": "Courier New",
+        	    	            "tahoma":  "Tahoma", "times":  "Times New Roman"]
+        	    	if (fontname.containsKey(attributes.name)) {
         	    		attributes.name = fontname[attributes.name]
         	    	}
         	    	
         	    	log.debug("attributes: ${attributes}")
         	    			
-                    WritableFont font = new WritableFont(attributes.name, attributes["size"], attributes.bold, attributes.italic, attributes.underline)
-                    font.colour = attributes.foreColor
-                    WritableCellFormat cellFormat = new WritableCellFormat(font)
+                    Font font = workbook.createFont()
+					font.bold = attributes.bold as boolean
+					font.underline = attributes.underline as byte
+					font.fontHeightInPoints = attributes.size as short
+					font.fontName = attributes.name as String
+					font.italic = attributes.italic as boolean
+                    font.color = attributes.foreColor as short
+                    CellStyle style = workbook.createCellStyle()
+					style.font = font
 
-                    if (attributes.useBorder) cellFormat.setBorder(Border.ALL, BorderLineStyle.THIN)
-                    if (attributes.backColor) cellFormat.setBackground(attributes.backColor)
-                    if (attributes.alignment) cellFormat.setAlignment(attributes.alignment)
-
-                    formats.put(format, cellFormat)
+                    if (attributes.useBorder) {
+						style.borderBottom = BorderStyle.THIN
+						style.borderLeft = BorderStyle.THIN
+						style.borderTop = BorderStyle.THIN
+						style.borderRight = BorderStyle.THIN
+					}
+                    if (attributes.backColor) {
+						style.setFillBackgroundColor(attributes.backColor as short)
+					}
+                    if (attributes.alignment) {
+						style.alignment = attributes.alignment as HorizontalAlignment
+					}
+                    formats.put(format, style)
     			}
     			catch(Exception e){
     				println "Error!"
@@ -256,7 +234,16 @@ class ExcelBuilder extends BuilderSupport {
         return null
     }
 
-    /**
+	private static CellStyle createDefaultHyperlinkStyle(wb) {
+		def style = wb.createCellStyle()
+		Font hyperLinkFont = wb.createFont()
+		hyperLinkFont.setUnderline(Font.U_SINGLE)
+		hyperLinkFont.setColor(IndexedColors.BLUE.getIndex())
+		style.setFont(hyperLinkFont)
+		return style
+	}
+
+	/**
      * This method isn't implemented.
      */
     protected Object createNode(Object name, Map attributes, Object value) {
@@ -268,16 +255,15 @@ class ExcelBuilder extends BuilderSupport {
     /**
      * Finish writing the document.
      */
-    public void write(){
+    void write(OutputStream targetStream) {
     	log.debug("Writing document")
-    	
     	try {
-        	workbook.write()
-    		workbook.close()	
-    	}
-    	catch(Exception e){
+        	workbook.write(targetStream)
+    	} catch (IOException e) {
     		log.error("Error writing document", e)
-    	}
+    	} finally {
+			targetStream.flush()
+			targetStream.close()
+		}
     }
-    
 }

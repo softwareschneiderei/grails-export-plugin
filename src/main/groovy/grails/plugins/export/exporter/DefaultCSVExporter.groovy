@@ -1,6 +1,7 @@
 package grails.plugins.export.exporter
 
-import au.com.bytecode.opencsv.CSVWriter
+import com.opencsv.CSVWriter
+
 
 /**
  * @author Andreas Schmitt
@@ -25,7 +26,7 @@ class DefaultCSVExporter extends AbstractExporter {
             }
 			
 			// Get stream writer considering charsets
-			CSVWriter writer = new CSVWriter(getOutputStreamWriter(outputStream), separator, quoteCharacter, lineEnd)
+			CSVWriter writer = new CSVWriter(getOutputStreamWriter(outputStream), separator, quoteCharacter, quoteCharacter, lineEnd)
 			
 			// Enable/Disable header output
 			boolean isHeaderEnabled = true

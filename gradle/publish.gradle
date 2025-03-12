@@ -39,8 +39,6 @@ if (bintrayProperties.exists()) {
   }
 }
 
-// Publish gh-pages on github
-apply plugin: "org.ajoberstar.github-pages"
 
 File githubProperties = project.rootProject.file('github.properties')
 if (githubProperties.exists()) {
