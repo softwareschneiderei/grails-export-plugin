@@ -110,15 +110,14 @@ class DefaultExcelExporter extends AbstractExporter {
             }
 
             builder.write(outputStream)
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new ExportingException("Error during export", e)
         }
     }
 
-    private computeSheetsAndLimit(List data, maxPerSheet) {
+    private static computeSheetsAndLimit(List data, maxPerSheet) {
 		if (!data) {
-            throw new ExportingException("Error during export: Empty data!")
+            return [1, 0]
         }
 
         def limitPerSheet = data.size() > maxPerSheet ? maxPerSheet : data.size()
