@@ -6,8 +6,6 @@ import grails.core.GrailsApplication
 
 class ExportService {
 
-    boolean transactional = false
-    
     def exporterFactory
 	GrailsApplication grailsApplication
 
@@ -32,5 +30,4 @@ class ExportService {
     	Exporter exporter = exporterFactory.createExporter(type, fields, labels, formatters, parameters)    	
     	exporter.export(response.outputStream, objects)
     }    
-
 }

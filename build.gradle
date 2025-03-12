@@ -54,7 +54,9 @@ dependencies {
     runtimeOnly 'xerces:xercesImpl:2.12.2'
 
     api 'org.odftoolkit:simple-odf:0.9.0'
-    api 'net.sourceforge.jexcelapi:jxl:2.6.12'
+    api 'org.apache.poi:poi:5.4.0'
+    api 'org.apache.poi:poi-ooxml:5.4.0'
+
     api 'commons-beanutils:commons-beanutils:1.10.1'
     api 'commons-codec:commons-codec:1.18.0'
 }

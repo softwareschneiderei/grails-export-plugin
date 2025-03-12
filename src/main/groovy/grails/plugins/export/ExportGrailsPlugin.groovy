@@ -2,7 +2,6 @@ package grails.plugins.export
 
 import grails.plugins.Plugin
 import groovy.util.logging.Commons
-import org.apache.log4j.Logger
 import org.slf4j.LoggerFactory
 
 @Commons
@@ -59,5 +58,4 @@ and can be extended to add additional formats.
 			log.error("Error initializing Export plugin")
 		}
     } }
-
 }
