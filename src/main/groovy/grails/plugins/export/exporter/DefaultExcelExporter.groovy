@@ -18,17 +18,17 @@ class DefaultExcelExporter extends AbstractExporter {
 
             // Enable/Disable header output
             boolean isHeaderEnabled = true
-            if(getParameters().containsKey("header.enabled")){
+            if (getParameters().containsKey("header.enabled")) {
                 isHeaderEnabled = getParameters().get("header.enabled")
             }
 
             boolean useZebraStyle = false
-            if(getParameters().containsKey("zebraStyle.enabled")){
+            if (getParameters().containsKey("zebraStyle.enabled")) {
                 useZebraStyle = getParameters().get("zebraStyle.enabled")
             }
 
             int maxPerSheet = 60000
-            if(getParameters().containsKey("max.rows.persheet")){
+            if (getParameters().containsKey("max.rows.persheet")) {
                 maxPerSheet = getParameters().get("max.rows.persheet")
             }
 
@@ -39,11 +39,11 @@ class DefaultExcelExporter extends AbstractExporter {
             def fileFormat = getParameters().get('fileFormat')
 
             builder {
-                workbook(fileFormat: fileFormat){
+                workbook(fileFormat: fileFormat, dateFormat: getParameters().get('dateFormat')){
                     for (int j = 1; j <= sheets; j++) {
                         def dataPerSheet = data.subList(startIndex, endIndex)
                         def sheetTitle = getParameters().get("title")
-                        sheet(name: sheetTitle ? "$sheetTitle-$j" : "Export-$j", widths: getParameters().get("column.widths"), numberOfFields: dataPerSheet.size(), widthAutoSize: getParameters().get("column.width.autoSize")) {
+                        sheet(name: sheetTitle ? "$sheetTitle-$j" : "Export-$j", widths: getParameters().get("column.widths"), numberOfFields: fields.size(), widthAutoSize: getParameters().get("column.width.autoSize")) {
 
                             format(name: "title") {
                                 HorizontalAlignment alignment = HorizontalAlignment.GENERAL
@@ -104,7 +104,7 @@ class DefaultExcelExporter extends AbstractExporter {
                         }
 
                         startIndex = endIndex
-                        endIndex = endIndex+limitPerSheet > data.size() ? data.size() : endIndex+limitPerSheet
+                        endIndex = endIndex + limitPerSheet > data.size() ? data.size() : endIndex + limitPerSheet
                     }
                 }
             }
