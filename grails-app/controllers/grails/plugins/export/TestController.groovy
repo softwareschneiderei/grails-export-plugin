@@ -4,11 +4,16 @@ class TestController {
     def exportService
 
     def index() { 
-        def data = [[name:'Grails', version:'5.0']]
+        def data = [[name:'Grails', version:'5.0', 'current date': new Date()]]
         String ext = params.extension ?: params.format
         if (ext in ['csv', 'xls', 'xlsx', 'ods', 'pdf', 'rtf', 'xml']) {
             response.setHeader("Content-disposition", "attachment; filename=test.${ext}")
-            exportService.export(ext == 'xls' || ext == 'xlsx' ? 'excel' : ext, response.outputStream, data, [:], [ 'fileFormat': ext])
+            def parameters = [
+                    'fileFormat': ext,
+                    'dateFormat': 'yyyy-MM-dd HH:mm:SS',
+                    'column.width.autoSize': true
+            ]
+            exportService.export(ext == 'xls' || ext == 'xlsx' ? 'excel' : ext, response.outputStream, data, [:], parameters)
             return
         }
 
