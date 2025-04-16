@@ -4,7 +4,7 @@ class TestController {
     def exportService
 
     def index() { 
-        def data = [[name:'Grails', version:'5.0', 'current date': new Date()]]
+        def data = [[name:'Grails', version: grailsApplication.config.getProperty('info.app.version'), 'current date': new Date()]]
         String ext = params.extension ?: params.format
         if (ext in ['csv', 'xls', 'xlsx', 'ods', 'pdf', 'rtf', 'xml']) {
             response.setHeader("Content-disposition", "attachment; filename=test.${ext}")
