@@ -11,9 +11,7 @@ buildscript {
 plugins {
     id "groovy"
     id "java-library"
-    id "war"
     id "idea"
-    id "application"
     id "eclipse"
     id "maven-publish"
 }
@@ -22,6 +20,27 @@ plugins {
 apply plugin: "org.grails.grails-plugin"
 
 group "org.grails.plugins"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+jar {
+    exclude 'gsp**'
+
+    List excludes = ['UrlMappings', 'TestController']
+    excludes.each {
+        exclude "**/${it}*.class"
+    }
+    eachFile { copyDetails ->
+        if (copyDetails.path.contains('grails-plugin.xml')) {
+            filter { line -> excludes.find{line.contains(it)}? null : line}
+        }
+    }
+    archiveClassifier=''
+}
 
 repositories {
     mavenCentral()
@@ -61,26 +80,6 @@ dependencies {
     api 'commons-codec:commons-codec:1.18.0'
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-jar {
-    exclude 'gsp**'
-
-    List excludes = ['UrlMappings', 'TestController']
-    excludes.each {
-        exclude "**/${it}*.class"
-    }
-    eachFile { copyDetails ->
-        if (copyDetails.path.contains('grails-plugin.xml')) {
-            filter { line -> excludes.find{line.contains(it)}? null : line}
-        }
-    }
-    archiveClassifier=''
-}
 
 tasks.withType(Test) {
     useJUnitPlatform()
