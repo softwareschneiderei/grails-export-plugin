@@ -5,6 +5,6 @@
 </head>
 
 <body>
-  <export:formats formats="['csv', 'excel', 'ods', 'pdf', 'rtf', 'xml']" />
+  <export:formats formats="['csv', 'excel 97', 'excel (NEW)', 'ods', 'pdf', 'rtf', 'xml']" />
 </body>
 </html>

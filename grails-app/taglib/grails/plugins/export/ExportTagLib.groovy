@@ -1,6 +1,7 @@
 package grails.plugins.export
 
 import grails.plugins.export.taglib.util.RenderUtils
+import groovy.xml.MarkupBuilder
 
 class ExportTagLib {
 
@@ -8,7 +9,7 @@ class ExportTagLib {
 
 	def formats = { attrs ->
 		StringWriter writer = new StringWriter()
-		def builder = new groovy.xml.MarkupBuilder(writer)
+		def builder = new MarkupBuilder(writer)
 
 		if(!attrs?.'class'){
 			attrs.'class' = "export"
@@ -27,7 +28,7 @@ class ExportTagLib {
 			attrs.remove("controller")
 		}
 
-		List formats = ['csv', 'excel', 'ods', 'pdf', 'rtf', 'xml']
+		List formats = ['csv', 'excel 97', 'excel (NEW)', 'ods', 'pdf', 'rtf', 'xml']
 		if(attrs?.formats){
 			formats = new ArrayList(attrs.formats)
 			attrs.remove("formats")
@@ -39,7 +40,7 @@ class ExportTagLib {
 			attrs.remove("params")
 		}
 
-		Map extensions = [excel: "xls"]
+		Map extensions = ['excel 97': "xls", 'excel (NEW)': 'xlsx']
 
 		builder."div"(attrs){
 			formats.each { format ->
@@ -75,7 +76,7 @@ class ExportTagLib {
 
 	def resource = { attrs ->
 		StringWriter writer = new StringWriter()
-		def builder = new groovy.xml.MarkupBuilder(writer)
+		def builder = new MarkupBuilder(writer)
 
 		String resourcePath = RenderUtils.getResourcePath("export", request?.contextPath)
 
