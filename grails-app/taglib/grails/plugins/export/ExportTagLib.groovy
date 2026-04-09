@@ -28,7 +28,7 @@ class ExportTagLib {
 			attrs.remove("controller")
 		}
 
-		List formats = ['csv', 'excel 97', 'excel (NEW)', 'ods', 'pdf', 'rtf', 'xml']
+		List formats = ['csv', 'excel 97', 'excel (xlsx)', 'ods', 'pdf', 'rtf', 'xml']
 		if(attrs?.formats){
 			formats = new ArrayList(attrs.formats)
 			attrs.remove("formats")
@@ -40,7 +40,7 @@ class ExportTagLib {
 			attrs.remove("params")
 		}
 
-		Map extensions = ['excel 97': "xls", 'excel (NEW)': 'xlsx']
+		Map extensions = ['excel 97': "xls", 'excel (xlsx)': 'xlsx']
 
 		builder."div"(attrs){
 			formats.each { format ->
