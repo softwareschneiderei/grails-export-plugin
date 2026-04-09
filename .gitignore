@@ -1,22 +1,45 @@
-# Eclipse
-.classpath
-.project
-.gradle/
+### Gradle ###
+.gradle
 build/
-.settings/
-target-eclipse/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+!**/src/integration-test/**/build/
 
-# Intellij
-.idea/
-*.iml
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+!**/src/integration-test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
 *.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+!**/src/integration-test/**/out/
 
-*.log
-test/reports
-target
-/docs
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Other ###
+Thumbs.db
 .DS_Store
-plugin.xml
-*.zip
-web-app
-*~
+target/

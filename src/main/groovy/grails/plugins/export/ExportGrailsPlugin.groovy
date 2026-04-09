@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 
 @Commons
 class ExportGrailsPlugin extends Plugin {
-    def grailsVersion = "5.0.0 > *"
+    def grailsVersion = "7.0.0 > *"
     def dependsOn = [:]
     def pluginExcludes = [
         "grails-app/views/error.gsp"

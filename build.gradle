@@ -1,52 +1,46 @@
 buildscript {
     repositories {
-        maven { url "https://repo.grails.org/grails/core" }
         mavenCentral()
+        maven {
+           url = 'https://repo.grails.org/grails/restricted'
+        }
     }
     dependencies { // Not Published to Gradle Plugin Portal
-        classpath "org.grails:grails-gradle-plugin:6.2.4"
+        classpath "cloud.wondrify:asset-pipeline-gradle"
+        classpath platform("org.apache.grails:grails-bom:$grailsVersion")
+        classpath "org.apache.grails:grails-gradle-plugins"
     }
 }
 
 plugins {
-    id "groovy"
-    id "java-library"
     id "war"
     id "idea"
-    id "application"
     id "eclipse"
     id "maven-publish"
 }
 
 // Not Published to Gradle Plugin Portal
-apply plugin: "org.grails.grails-plugin"
+apply plugin: "org.apache.grails.gradle.grails-gsp"
+apply plugin: "cloud.wondrify.asset-pipeline"
+apply plugin: "org.apache.grails.gradle.grails-plugin"
 
 group "org.grails.plugins"
 
 repositories {
     mavenCentral()
     maven {
-        name "Grails"
-        url "https://repo.grails.org/grails/core"
+       url = 'https://repo.grails.org/grails/restricted'
     }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-logging'
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-autoconfigure"
-    implementation "org.springframework.boot:spring-boot-starter-tomcat"
+    profile "org.apache.grails.profiles:web-plugin"
+    developmentOnly "org.springframework.boot:spring-boot-devtools" // Spring Boot DevTools may cause performance slowdowns or compatibility issues on larger applications
+    testAndDevelopmentOnly "org.webjars.npm:bootstrap"
+    testAndDevelopmentOnly "org.webjars.npm:bootstrap-icons"
+    testAndDevelopmentOnly "org.webjars.npm:jquery"
 
-    implementation "org.grails:grails-web-boot"
-    implementation "org.grails:grails-dependencies"
-
+    // export plugin specific dependencies
     api 'com.opencsv:opencsv:5.10'
 
     api 'com.github.librepdf:openpdf:1.4.2'
@@ -59,11 +53,55 @@ dependencies {
 
     api 'commons-beanutils:commons-beanutils:1.10.1'
     api 'commons-codec:commons-codec:1.18.0'
+
+
+    // default plugin dependencies
+    implementation platform("org.apache.grails:grails-bom:$grailsVersion")
+    implementation "org.apache.grails:grails-core"
+    implementation "org.apache.grails:grails-events"
+    implementation "org.apache.grails:grails-gsp"
+    implementation "org.apache.grails:grails-interceptors"
+    implementation "org.apache.grails:grails-layout"
+    implementation "org.apache.grails:grails-logging"
+    implementation "org.apache.grails:grails-scaffolding"
+    implementation "org.apache.grails:grails-services"
+    implementation "org.apache.grails:grails-url-mappings"
+    implementation "org.apache.grails:grails-web-boot"
+
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    console "org.apache.grails:grails-console"
+    runtimeOnly "cloud.wondrify:asset-pipeline-grails"
+    runtimeOnly "org.fusesource.jansi:jansi"
+    testImplementation "org.apache.grails:grails-testing-support-datamapping"
+    testImplementation "org.apache.grails:grails-testing-support-web"
+    testImplementation "org.spockframework:spock-core"
 }
 
-java {
-    sourceCompatibility = JavaVersion.toVersion("11")
-    targetCompatibility = JavaVersion.toVersion("11")
+compileJava.options.release = 17
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+assets {
+    packagePlugin = true
+    excludes = [
+            'webjars/jquery/**',
+            'webjars/bootstrap/**',
+            'webjars/bootstrap-icons/**'
+    ]
+    includes = [
+            'webjars/jquery/*/dist/jquery.js',
+            'webjars/bootstrap/*/dist/js/bootstrap.bundle.js',
+            'webjars/bootstrap/*/dist/css/bootstrap.css',
+            'webjars/bootstrap-icons/*/font/bootstrap-icons.css',
+            'webjars/bootstrap-icons/*/font/fonts/*',
+    ]
 }
 
 jar {
@@ -72,11 +110,6 @@ jar {
     List excludes = ['UrlMappings', 'TestController']
     excludes.each {
         exclude "**/${it}*.class"
-    }
-    eachFile { copyDetails ->
-        if (copyDetails.path.contains('grails-plugin.xml')) {
-            filter { line -> excludes.find{line.contains(it)}? null : line}
-        }
     }
     archiveClassifier=''
 }
@@ -171,4 +204,9 @@ publishing {
             }
         }
     }
+}
+
+// https://github.com/apache/grails-core/issues/15321
+tasks.withType(GroovyCompile).configureEach {
+    groovyOptions.optimizationOptions.indy = false
 }
