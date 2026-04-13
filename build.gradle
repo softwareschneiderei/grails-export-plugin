@@ -106,16 +106,10 @@ assets {
 
 jar {
     exclude 'gsp**'
-    exclude '**/skin/*'
     exclude '**/*.svg'
-    exclude '**/*.png'
-    exclude '**/*.jpg'
     exclude '**/*.ico'
-    exclude '**/*.css'
     exclude 'layouts/'
     exclude 'test/'
-    exclude '**/assets/'
-    exclude '**/assets.list'
 
     List excludes = ['UrlMappings', 'TestController']
     excludes.each {
